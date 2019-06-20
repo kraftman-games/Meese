@@ -1,13 +1,37 @@
 
 
 local lg = love.graphics
+local startScreen = require 'startscreen'
+local meese = require 'meese'
 
-local Pong = require 'minigame.pong.pong'
-local players = {
-  [1] = {id = 0},
-  [2] = {id = 1},
-  [3] = { id = 3},
+local main = {
+  defaultTarget = 'startScreen'
 }
+function main:EndGame()
+  meese:RemoveTarget(self.target)
+  self.target = startScreen
+end
+
+function main:StartGame()
+  local players = meese:GetPlayers()
+  local numLevels = 5
+  local game = Game:Create(self, players, numLevels)
+  self.target = game
+  meese:AddTarget(game)
+end
+
+function main:Pause()
+  self.paused = true
+  meese:RemoveTarget(self.target)
+  meese:AddTarget(pauseMenu)
+
+end
+
+function main:Unpause()
+  self.paused = false
+  meese:RemoveTarget(pauseMenu)
+  meese:AddTarget(self.target)
+end
 
 local game = {
   EndGame = function(self, playerScores)
@@ -16,9 +40,6 @@ local game = {
     end
   end
 }
-local pong = Pong:Create(game, players)
-local meese = require 'meese'
-meese:AddTarget(pong)
 
 love.mouse.setVisible(false)
 love.mouse.setGrabbed(true)
@@ -30,11 +51,18 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-  pong:Update(dt)
+  if main.paused then
+    pauseMenu:Update(dt)
+  else
+    main.target:Update(dt)
+  end
 end
 
 function love.draw()
   meese:Draw()
-  pong:Draw()
+  main.target:Draw()
+  if main.paused then
+    pauseMenu:Draw()
+  end
   
 end

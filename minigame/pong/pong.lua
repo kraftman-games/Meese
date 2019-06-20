@@ -18,7 +18,7 @@ function pong:RemoveBall(ball)
   self.balls[ball] = nil
 end
 
-function pong:EndGame()
+function pong:EndLevel()
   local playerScores = {}
   local winningSide = self.scores.left > self.scores.right and 'left' or 'right'
   for id, paddle in pairs(self.paddles) do
@@ -28,7 +28,7 @@ function pong:EndGame()
       playerScores[id] = 0
     end
   end
-  return self.game:EndGame(playerScores)
+  return self.game:EndLevel(playerScores)
 end
 
 function pong:Score(zone)
@@ -39,7 +39,7 @@ function pong:Score(zone)
   end
   self.scores.total = self.scores.total + 1
   if self.scores.total >= self.maxScore then
-    return self:EndGame()
+    return self:EndLevel()
   end
   self:AddBall()
   
