@@ -71,6 +71,7 @@ local function addMouse(id)
 end
 
 function love.micemoved(id, axis, value)
+  id = id + 1
   addMouse(id)
   if axis == 'X' then
     mice[id]:UpdateX(value)
@@ -86,6 +87,7 @@ function love.micemoved(id, axis, value)
 end
 
 function love.micepressed(id, button)
+  id = id + 1
   addMouse(id)
   mice[id]:PressButton(button)
   for k,v in pairs(meece.targets) do
@@ -95,11 +97,12 @@ function love.micepressed(id, button)
   end
 end
 function love.micereleased(id, button)
+  id = id + 1
   addMouse(id)
   mice[id]:ReleaseButton(button)
   for k,v in pairs(meece.targets) do
     if v.MouseReleased then 
-      v:MouseReleased(id, button)
+      v:MouseReleased(mice[id], button)
     end
   end
 end
@@ -129,7 +132,7 @@ function meece:GetNumMice()
 end
 
 function meece:GetMice()
-  return self.mice
+  return mice
 end
 return meece
 

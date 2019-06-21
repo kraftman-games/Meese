@@ -16,3 +16,8 @@ steam achievements
 other level ideas:
  - deathrun
  - dinosaur jumping game
+ - minesweeper?
+ - bejeweled?
+ - https://dvyskoc.itch.io/galaxystrife
+ - https://anttihaavikko.itch.io/float-and-gloat
+ - https://ske.itch.io/synergy

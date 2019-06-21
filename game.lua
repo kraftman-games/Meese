@@ -9,7 +9,7 @@ game.__index = game
 
 local levelsList = {
   Pong = require 'minigame.pong.pong',
-  Flappy = require 'minigame.flappy',
+  --Flappy = require 'minigame.flappy.flappy',
 }
 
 function game:AddLevels(numLevels)
@@ -18,18 +18,24 @@ function game:AddLevels(numLevels)
   -- get the levels we have the least off
   -- choose random from these
   -- always add scoreboard as end level
+  local pong = levelsList.Pong:Create(self, self.players)
+  table.insert(self.levels, pong)
 end
 
 function game:SetNextLevel(level)
-  if not self.levels[i] then 
+  if self.currentLevel then
+    self.meese:RemoveTarget(self.currentLevel)
+  end
+  if not self.levels[1] then 
     return nil
   end
   self.currentLevel = self.levels[1]
+  self.meese:AddTarget(self.currentLevel)
   table.remove(self.levels, 1)
   return self.currentLevel
 end
 
-function game:FinishLevel(scores)
+function game:EndLevel(scores)
   for id, score in pairs(scores) do
     self.scores[id] = self.scores[id] + score
   end
@@ -40,21 +46,32 @@ function game:FinishLevel(scores)
 end
 
 function game:FinishGame()
-  main:EndGame()
+  self.main:EndGame()
 end
 
+function game:Update(dt)
+  self.currentLevel:Update(dt)
+end
 
-function game:Create(main, players, numLevels)
+function game:Draw()
+  self.currentLevel:Draw()
+end
+
+function game:Create(main, meese, players, numLevels)
   local defaults = {
     levels = {},
     scores = {},
-    currentLevel
+    currentLevel,
+    players = players,
+    meese = meese,
+    main = main
   }
   local ga = setmetatable(defaults, game)
   ga:AddLevels()
   for id, players in pairs(players) do
     ga.scores[id] = 0
   end
+  ga:SetNextLevel()
   return ga
 end
 

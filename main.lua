@@ -1,21 +1,24 @@
 
 
 local lg = love.graphics
-local startScreen = require 'startscreen'
+local StartScreen = require 'startscreen'
 local meese = require 'meese'
+local Game = require 'game'
 
-local main = {
-  defaultTarget = 'startScreen'
-}
+local main = {}
+local startScreen = StartScreen:Create(main)
+main.target = startScreen
+meese:AddTarget(startScreen)
+
 function main:EndGame()
   meese:RemoveTarget(self.target)
   self.target = startScreen
 end
 
 function main:StartGame()
-  local players = meese:GetPlayers()
+  local players = meese:GetMice()
   local numLevels = 5
-  local game = Game:Create(self, players, numLevels)
+  local game = Game:Create(self, meese, players, numLevels)
   self.target = game
   meese:AddTarget(game)
 end
